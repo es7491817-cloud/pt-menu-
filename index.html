@@ -1,0 +1,638 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT MENU</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #101010;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* FUNDO COM IMAGENS */
+.slideshow {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: #151515;
+}
+
+.slideshow img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.slideshow img.active {
+    opacity: 1;
+}
+
+/* ESCURECER FUNDO */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.55);
+    pointer-events: none;
+}
+
+/* MENU PRINCIPAL */
+.app {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-height: 100vh;
+}
+
+/* BARRA LATERAL */
+.sidebar {
+    width: 220px;
+    min-height: 100vh;
+    flex-shrink: 0;
+    padding: 22px 13px;
+    background: rgba(8, 8, 8, 0.88);
+    border-right: 1px solid #ff333355;
+    backdrop-filter: blur(10px);
+}
+
+/* LOGO */
+.logo {
+    text-align: center;
+    margin: 12px 0 8px;
+}
+
+.logo img {
+    display: block;
+    width: 145px;
+    max-width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+    margin: auto;
+}
+
+.logo-text {
+    display: none;
+    color: #ff3333;
+    font-size: 27px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-shadow: 0 0 15px #ff333355;
+}
+
+.subtitle {
+    text-align: center;
+    color: #999;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin: 15px 0 30px;
+}
+
+/* NAVEGAÇÃO */
+.nav-button {
+    display: block;
+    width: 100%;
+    padding: 13px 11px;
+    margin: 8px 0;
+    color: #ccc;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nav-button:hover,
+.nav-button.active {
+    color: white;
+    background: #ff333322;
+    border-color: #ff333366;
+}
+
+/* CONTEÚDO */
+.main {
+    flex: 1;
+    min-width: 0;
+    padding: 28px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #ffffff30;
+}
+
+.topbar h2 {
+    font-size: 20px;
+}
+
+.status {
+    padding: 8px 12px;
+    color: #ff5555;
+    background: #ff333315;
+    border: 1px solid #ff333355;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.content {
+    width: 100%;
+    max-width: 850px;
+    margin: 40px auto;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.welcome {
+    font-size: clamp(29px, 5vw, 46px);
+    margin-bottom: 14px;
+}
+
+.welcome span {
+    color: #ff3333;
+}
+
+.description {
+    color: #ccc;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+/* CARTÕES */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 15px;
+    margin-top: 22px;
+}
+
+.card {
+    margin-top: 16px;
+    padding: 20px;
+    background: rgba(18, 18, 18, 0.88);
+    border: 1px solid #ffffff25;
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+}
+
+.card h3 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    color: #ccc;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* OPÇÕES ON/OFF */
+.option-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid #ffffff20;
+}
+
+.option-row:last-child {
+    border-bottom: none;
+}
+
+.option-name {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.option-description {
+    margin-top: 5px;
+    color: #999;
+    font-size: 12px;
+}
+
+.toggle-button {
+    min-width: 76px;
+    padding: 10px 13px;
+    color: white;
+    background: #303030;
+    border: 1px solid #555;
+    border-radius: 7px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.toggle-button:hover {
+    border-color: #ff5555;
+}
+
+.toggle-button.on {
+    background: #d92323;
+    border-color: #ff5555;
+    box-shadow: 0 0 12px #e5262635;
+}
+
+/* BOTÕES DE AÇÃO */
+.red-button {
+    padding: 12px 16px;
+    color: white;
+    background: #d92323;
+    border: none;
+    border-radius: 7px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.red-button:hover {
+    background: #f13b3b;
+}
+
+.footer {
+    margin-top: 45px;
+    color: #999;
+    font-size: 12px;
+}
+
+/* BOTÃO PARA REABRIR MENU */
+#open-menu {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 10;
+}
+
+/* TELAS PEQUENAS */
+@media (max-width: 600px) {
+    .sidebar {
+        width: 140px;
+        padding: 14px 7px;
+    }
+
+    .logo img {
+        width: 110px;
+    }
+
+    .logo-text {
+        font-size: 19px;
+    }
+
+    .nav-button {
+        padding: 11px 7px;
+        font-size: 12px;
+    }
+
+    .main {
+        padding: 15px 10px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- FUNDO AUTOMÁTICO -->
+<div class="slideshow">
+    <img src="fundo1.jpg" class="active" alt="">
+    <img src="fundo2.jpg" alt="">
+    <img src="fundo3.jpg" alt="">
+</div>
+
+<div class="overlay"></div>
+
+<!-- MENU -->
+<div class="app" id="app">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <img
+                src="logo.png"
+                alt="Logo PT MENU"
+                onerror="this.style.display='none';
+                this.nextElementSibling.style.display='block';"
+            >
+            <div class="logo-text">PT MENU</div>
+        </div>
+
+        <div class="subtitle">VISUAL INTERFACE</div>
+
+        <button class="nav-button active" data-page="home">
+            ◈ &nbsp; Início
+        </button>
+
+        <button class="nav-button" data-page="aimbot-pt">
+            ◎ &nbsp; Aimbot PT
+        </button>
+
+        <button class="nav-button" data-page="visual">
+            ▣ &nbsp; Visual
+        </button>
+
+        <button class="nav-button" data-page="settings">
+            ⚙ &nbsp; Configurações
+        </button>
+
+        <button class="nav-button" data-page="about">
+            ⓘ &nbsp; Sobre
+        </button>
+
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <h2 id="page-title">Início</h2>
+            <div class="status">● PT MENU</div>
+        </header>
+
+        <div class="content">
+
+            <!-- INÍCIO -->
+            <section class="page active" id="home">
+
+                <h1 class="welcome">
+                    Bem-vindo ao <span>PT MENU</span>
+                </h1>
+
+                <p class="description">
+                    Interface personalizada com fundo animado,
+                    tema escuro e detalhes vermelhos.
+                </p>
+
+                <button class="red-button" id="next-background">
+                    Trocar imagem do fundo
+                </button>
+
+                <div class="cards">
+                    <div class="card">
+                        <h3>◈ Interface</h3>
+                        <p>Design escuro com detalhes vermelhos.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>▧ Plano de fundo</h3>
+                        <p>As imagens trocam a cada 3 segundos.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>⚙ Personalização</h3>
+                        <p>Abas e opções interativas.</p>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- AIMBOT PT -->
+            <section class="page" id="aimbot-pt">
+
+                <h1 class="welcome">
+                    Aimbot <span>PT</span>
+                </h1>
+
+                <p class="description">
+                    Opções demonstrativas da interface.
+                </p>
+
+                <div class="card">
+
+                    <div class="option-row">
+                        <div>
+                            <div class="option-name">Aimbot</div>
+                            <div class="option-description">
+                                Controle visual ON/OFF
+                            </div>
+                        </div>
+
+                        <button class="toggle-button"
+                                type="button"
+                                aria-pressed="false">OFF</button>
+                    </div>
+
+                    <div class="option-row">
+                        <div>
+                            <div class="option-name">FOV</div>
+                            <div class="option-description">
+                                Controle visual ON/OFF
+                            </div>
+                        </div>
+
+                        <button class="toggle-button"
+                                type="button"
+                                aria-pressed="false">OFF</button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- VISUAL -->
+            <section class="page" id="visual">
+
+                <h1 class="welcome">
+                    <span>Visual</span>
+                </h1>
+
+                <p class="description">
+                    Opções visuais demonstrativas do menu.
+                </p>
+
+                <div class="card">
+
+                    <div class="option-row">
+                        <div>
+                            <div class="option-name">ESP</div>
+                            <div class="option-description">
+                                Controle visual ON/OFF
+                            </div>
+                        </div>
+
+                        <button class="toggle-button"
+                                type="button"
+                                aria-pressed="false">OFF</button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- CONFIGURAÇÕES -->
+            <section class="page" id="settings">
+
+                <h1 class="welcome">
+                    Configura<span>ções</span>
+                </h1>
+
+                <p class="description">
+                    Configurações da apresentação visual.
+                </p>
+
+                <div class="card">
+                    <h3>Fundo automático</h3>
+                    <p>Controle a troca de imagens do fundo.</p>
+                    <br>
+
+                    <button class="red-button" id="toggle-background">
+                        Pausar fundo
+                    </button>
+                </div>
+
+            </section>
+
+            <!-- SOBRE -->
+            <section class="page" id="about">
+
+                <h1 class="welcome">
+                    Sobre o <span>PT MENU</span>
+                </h1>
+
+                <p class="description">
+                    Projeto de interface visual criado em HTML,
+                    CSS e JavaScript.
+                </p>
+
+                <div class="card">
+                    <h3>PT MENU</h3>
+                    <p>Versão 1.0 — Interface visual demonstrativa.</p>
+                    <br>
+
+                    <button class="red-button" id="close-menu">
+                        Fechar menu
+                    </button>
+                </div>
+
+            </section>
+
+            <div class="footer">
+                PT MENU © 2026
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+<!-- BOTÃO PARA REABRIR -->
+<button class="red-button" id="open-menu">
+    Abrir menu
+</button>
+
+<script>
+// FUNDO: TROCA A CADA 3 SEGUNDOS
+const images = document.querySelectorAll(".slideshow img");
+let currentImage = 0;
+let paused = false;
+
+function showImage(index) {
+    images.forEach(img => img.classList.remove("active"));
+
+    if (images.length > 0) {
+        images[index].classList.add("active");
+    }
+}
+
+function nextImage() {
+    if (images.length === 0) return;
+
+    currentImage = (currentImage + 1) % images.length;
+    showImage(currentImage);
+}
+
+setInterval(() => {
+    if (!paused) nextImage();
+}, 3000);
+
+// TROCAR IMAGEM MANUALMENTE
+document.getElementById("next-background")
+    .addEventListener("click", nextImage);
+
+// PAUSAR OU RETOMAR FUNDO
+document.getElementById("toggle-background")
+    .addEventListener("click", event => {
+        paused = !paused;
+
+        event.target.textContent = paused
+            ? "Retomar fundo"
+            : "Pausar fundo";
+    });
+
+// BOTÕES VISUAIS OFF/ON
+document.querySelectorAll(".toggle-button").forEach(button => {
+    button.addEventListener("click", () => {
+        const turningOn = button.textContent.trim() === "OFF";
+
+        button.textContent = turningOn ? "ON" : "OFF";
+        button.classList.toggle("on", turningOn);
+        button.setAttribute("aria-pressed", String(turningOn));
+    });
+});
+
+// NAVEGAÇÃO ENTRE ABAS
+const navButtons = document.querySelectorAll(".nav-button[data-page]");
+const pages = document.querySelectorAll(".page");
+const pageTitle = document.getElementById("page-title");
+
+navButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        const target = button.dataset.page;
+        const selectedPage = document.getElementById(target);
+
+        if (!selectedPage) return;
+
+        navButtons.forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+
+        pages.forEach(page => page.classList.remove("active"));
+        selectedPage.classList.add("active");
+
+        pageTitle.textContent = button.textContent.trim();
+    });
+});
+
+// FECHAR E REABRIR MENU
+const app = document.getElementById("app");
+const openButton = document.getElementById("open-menu");
+
+document.getElementById("close-menu").addEventListener("click", () => {
+    app.style.display = "none";
+    openButton.style.display = "block";
+});
+
+openButton.addEventListener("click", () => {
+    app.style.display = "flex";
+    openButton.style.display = "none";
+});
+</script>
+
+</body>
+</html>
